@@ -42,7 +42,7 @@ jobs:
       with:
         name: GetAssemblyInfo-${{ matrix.arch }}
         path: |
-          ${{ github.workspace }}/output
-          !{{ github.workspace }}/output/*.dbg
-          !{{ github.workspace }}/output/*.pdb
+          ${{ github.workspace }}/output/GetAssemblyInfo
+          ${{ github.workspace }}/output/GetAssemblyInfo.exe
+
         
