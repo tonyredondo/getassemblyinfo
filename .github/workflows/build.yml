@@ -21,7 +21,7 @@ jobs:
           - os: ubuntu-22.04
             arch: linux-x64
           - os: windows-2022
-            arch: windows-x64
+            arch: win-x64
           - os: macos-11
             arch: osx-x64
     steps:
