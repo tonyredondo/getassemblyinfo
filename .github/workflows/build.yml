@@ -41,4 +41,8 @@ jobs:
     - uses: actions/upload-artifact@v3
       with:
         name: GetAssemblyInfo-${{ matrix.arch }}
-        path: ${{ github.workspace }}/output
+        path: |
+          ${{ github.workspace }}/output
+          !{{ github.workspace }}/output/*.dbg
+          !{{ github.workspace }}/output/*.pdb
+        
