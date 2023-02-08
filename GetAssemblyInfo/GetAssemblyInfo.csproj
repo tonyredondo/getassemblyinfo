@@ -5,13 +5,29 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <PublishSingleFile>true</PublishSingleFile>
         <SelfContained>true</SelfContained>
-        <RuntimeIdentifier>osx-arm64</RuntimeIdentifier>
         <PublishReadyToRun>true</PublishReadyToRun>
         <StripSymbols>true</StripSymbols>
         <PublishTrimmed>true</PublishTrimmed>
+        <UseSystemResourceKeys>true</UseSystemResourceKeys>
+        <InvariantGlobalization>true</InvariantGlobalization>
     </PropertyGroup>
+    
+    <Choose>
+        <When Condition="$([MSBuild]::IsOSPlatform('OSX'))">
+            <PropertyGroup>
+                <PublishSingleFile>true</PublishSingleFile>
+            </PropertyGroup>
+        </When>
+        <Otherwise>
+            <PropertyGroup>
+                <PublishAot>true</PublishAot>
+            </PropertyGroup>
+            <ItemGroup Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'X64'">
+                <PackageReference Include="PublishAotCompressed" Version="1.0.0" />
+            </ItemGroup>
+        </Otherwise>
+    </Choose>
 
     <ItemGroup>
       <PackageReference Include="Mono.Cecil" Version="0.11.4" />
