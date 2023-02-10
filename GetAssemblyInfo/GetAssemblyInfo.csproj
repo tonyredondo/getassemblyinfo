@@ -10,7 +10,6 @@
         <StripSymbols>true</StripSymbols>
         <PublishTrimmed>true</PublishTrimmed>
         <UseSystemResourceKeys>true</UseSystemResourceKeys>
-        <InvariantGlobalization>true</InvariantGlobalization>
     </PropertyGroup>
     
     <Choose>
