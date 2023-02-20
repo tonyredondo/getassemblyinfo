@@ -1,15 +1,16 @@
 ﻿using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using Mono.Cecil;
 
-if (args?.Length < 1)
+if (args.Length < 1)
 {
     Console.WriteLine("You must specify a filename as an argument");
     Environment.ExitCode = 1;
     return;
 }
 
-var filePath = args?[0];
+var filePath = args[0];
 if (string.IsNullOrWhiteSpace(filePath) || !File.Exists(filePath))
 {
     Console.WriteLine("File '{0}' doesn't exist.", filePath);
@@ -17,63 +18,109 @@ if (string.IsNullOrWhiteSpace(filePath) || !File.Exists(filePath))
     return;
 }
 
-var assemblyName = AssemblyName.GetAssemblyName(filePath);
-Console.WriteLine("{0}: {1}", nameof(assemblyName.Name), assemblyName.Name);
-Console.WriteLine("{0}: {1}", nameof(assemblyName.Version), assemblyName.Version);
-Console.WriteLine("{0}: {1}", nameof(assemblyName.Flags), assemblyName.Flags);
-Console.WriteLine("{0}: {1}", nameof(assemblyName.CultureName), assemblyName.CultureName);
-Console.WriteLine("{0}: {1}", nameof(assemblyName.FullName), assemblyName.FullName);
-Console.WriteLine("{0}: {1}", nameof(assemblyName.ContentType), assemblyName.ContentType);
-var processedAttributes = new List<string>();
-try
+if (args.Length > 1 && args[1] == "--full")
 {
-    var asm = AssemblyDefinition.ReadAssembly(filePath);
-    Console.WriteLine("ModuleVersionId: {0}", asm.MainModule.Mvid);
-    foreach (var attr in asm.MainModule.GetCustomAttributes())
+    Console.Write(GetFullAssemblyInfoFromFilePath(filePath));
+}
+else
+{
+    Console.Write(GetCompactAssemblyInfoFromFilePath(filePath));
+}
+
+static string GetCompactAssemblyInfoFromFilePath(string filePath)
+{
+    var sb = new StringBuilder();
+    var assemblyName = AssemblyName.GetAssemblyName(filePath);
+    sb.AppendFormat("{0}: {1}{2}", nameof(assemblyName.Name), assemblyName.Name, Environment.NewLine);
+    sb.AppendFormat("{0}: {1}{2}", nameof(assemblyName.Version), assemblyName.Version, Environment.NewLine);
+    try
     {
-        try
+        var asm = AssemblyDefinition.ReadAssembly(filePath);
+        sb.AppendFormat("ModuleVersionId: {0}{1}", asm.MainModule.Mvid, Environment.NewLine);
+    }
+    catch (Exception ex)
+    {
+        sb.AppendFormat("{0}{1}", ex, Environment.NewLine);
+    }
+
+    return sb.ToString();
+}
+
+static string GetFullAssemblyInfoFromFilePath(string filePath)
+{
+    var sb = new StringBuilder();
+    var assemblyName = AssemblyName.GetAssemblyName(filePath);
+    sb.AppendFormat("{0}: {1}{2}", nameof(assemblyName.Name), assemblyName.Name, Environment.NewLine);
+    sb.AppendFormat("{0}: {1}{2}", nameof(assemblyName.Version), assemblyName.Version, Environment.NewLine);
+    sb.AppendFormat("{0}: {1}{2}", nameof(assemblyName.Flags), assemblyName.Flags, Environment.NewLine);
+    sb.AppendFormat("{0}: {1}{2}", nameof(assemblyName.CultureName), assemblyName.CultureName, Environment.NewLine);
+    sb.AppendFormat("{0}: {1}{2}", nameof(assemblyName.FullName), assemblyName.FullName, Environment.NewLine);
+    sb.AppendFormat("{0}: {1}{2}", nameof(assemblyName.ContentType), assemblyName.ContentType, Environment.NewLine);
+    var processedAttributes = new List<string>();
+    try
+    {
+        var asm = AssemblyDefinition.ReadAssembly(filePath);
+        sb.AppendFormat("ModuleVersionId: {0}{1}", asm.MainModule.Mvid, Environment.NewLine);
+        foreach (var attr in asm.MainModule.GetCustomAttributes())
         {
-            if (processedAttributes.Contains(attr.AttributeType.FullName))
+            try
             {
-                continue;
-            }
-            
-            processedAttributes.Add(attr.AttributeType.FullName);
-
-            if (attr.HasProperties)
-            {
-                foreach (var prop in attr.Properties)
+                if (processedAttributes.Contains(attr.AttributeType.FullName))
                 {
-                    Console.WriteLine("{0}.{1}: {2}", attr.AttributeType.Name, prop.Name, prop.Argument.Value);
-                }
-            }
-
-            if (attr.HasConstructorArguments)
-            {
-                var arguments = new List<string>();
-                for (var i = 0; i < attr.ConstructorArguments.Count; i++)
-                {
-                    var ctrArg = attr.Constructor.Parameters[i];
-                    if (string.IsNullOrEmpty(ctrArg.Name))
-                    {
-                        arguments.Add(attr.ConstructorArguments[i].Value?.ToString() ?? "(null)");
-                    }
-                    else
-                    {
-                        arguments.Add( ctrArg.Name + ": " + (attr.ConstructorArguments[i].Value?.ToString() ?? "(null)"));
-                    }
+                    continue;
                 }
                 
-                Console.WriteLine("{0}: {1}", attr.AttributeType.Name, string.Join(", ", arguments));
+                processedAttributes.Add(attr.AttributeType.FullName);
+
+                if (attr.HasProperties)
+                {
+                    foreach (var prop in attr.Properties)
+                    {
+                        sb.AppendFormat("{0}.{1}: {2}{3}", attr.AttributeType.Name, prop.Name, prop.Argument.Value, Environment.NewLine);
+                    }
+                }
+
+                if (attr.HasConstructorArguments)
+                {
+                    var arguments = new List<string>();
+                    for (var i = 0; i < attr.ConstructorArguments.Count; i++)
+                    {
+                        var ctrArg = attr.Constructor.Parameters[i];
+                        if (string.IsNullOrEmpty(ctrArg.Name))
+                        {
+                            arguments.Add(attr.ConstructorArguments[i].Value?.ToString() ?? "(null)");
+                        }
+                        else
+                        {
+                            arguments.Add( ctrArg.Name + ": " + (attr.ConstructorArguments[i].Value?.ToString() ?? "(null)"));
+                        }
+                    }
+                    
+                    sb.AppendFormat("{0}: {1}{2}", attr.AttributeType.Name, string.Join(", ", arguments), Environment.NewLine);
+                }
+            }
+            catch
+            {
+                //
             }
         }
-        catch
-        {
-            //
-        }
     }
+    catch (Exception ex)
+    {
+        sb.AppendFormat("{0}{1}", ex, Environment.NewLine);
+    }
+
+    return sb.ToString();
 }
-catch (Exception ex)
+
+[UnmanagedCallersOnly]
+static IntPtr GetInfo(IntPtr pFilepath)
 {
-    Console.WriteLine(ex);
+    if (Marshal.PtrToStringAnsi(pFilepath) is { } filepath)
+    {
+        var result = GetCompactAssemblyInfoFromFilePath(filepath);
+        return Marshal.StringToHGlobalAnsi(result);
+    }
+
+    return IntPtr.Zero;
 }
