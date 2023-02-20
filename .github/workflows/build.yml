@@ -25,6 +25,16 @@ jobs:
           - os: macos-11
             arch: osx-x64
     steps:
+    - name: Install dependencies 
+      if: matrix.arch != 'linux-x64'
+      script: |
+        sudo apt install clang
+        sudo apt-get install libtool
+        sudo apt-get install libssl-dev
+        sudo apt-get install -y make gcc libc-dev libpq-dev zlib1g-dev
+        sudo -E apt-get install -y libpam-dev libedit-dev libselinux1-dev
+        sudo -E apt-get install -y libssl-dev libkrb5-dev
+      
     - uses: actions/checkout@v3
 
     - name: Setup .NET
