@@ -25,7 +25,18 @@ jobs:
           - os: macos-11
             arch: osx-x64
     steps:
+    - name: Install dependencies 
+      if: matrix.arch == 'linux-x64'
+      run: |
+        sudo apt install clang
+        sudo apt-get install libtool
+        sudo apt-get install libssl-dev
+        sudo apt-get install -y make gcc libc-dev libpq-dev zlib1g-dev
+        sudo -E apt-get install -y libpam-dev libedit-dev libselinux1-dev
+        sudo -E apt-get install -y libssl-dev libkrb5-dev
+      
     - uses: actions/checkout@v3
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
@@ -33,10 +44,13 @@ jobs:
 
     - name: Restore dependencies
       run: dotnet restore
+
     - name: Build
       run: dotnet build -c Release
+
     - name: Publish
-      run: dotnet publish -c Release -o ./output
+      run: dotnet publish -c Release -o ../output
+      working-directory: GetAssemblyInfo
 
     - uses: actions/upload-artifact@v3
       with:
@@ -45,4 +59,15 @@ jobs:
           ${{ github.workspace }}/output/GetAssemblyInfo
           ${{ github.workspace }}/output/GetAssemblyInfo.exe
 
-        
+    - name: Publish shared library
+      if: matrix.arch != 'osx-x64'
+      run: dotnet publish /p:NativeLib=Shared /p:OutputType=Library -r ${{ matrix.arch }} -c Release -o ../output
+      working-directory: GetAssemblyInfo
+
+    - uses: actions/upload-artifact@v3
+      if: matrix.arch != 'osx-x64'
+      with:
+        name: GetAssemblyInfo-${{ matrix.arch }}-shared
+        path: |
+          ${{ github.workspace }}/output/GetAssemblyInfo.dll
+          ${{ github.workspace }}/output/GetAssemblyInfo.so
