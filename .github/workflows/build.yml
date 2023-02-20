@@ -26,6 +26,7 @@ jobs:
             arch: osx-x64
     steps:
     - uses: actions/checkout@v3
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
@@ -33,14 +34,17 @@ jobs:
 
     - name: Restore dependencies
       run: dotnet restore
+
     - name: Build
       run: dotnet build -c Release
+
     - name: Publish
       run: dotnet publish -c Release -o ../output
       working-directory: GetAssemblyInfo
+
     - name: Publish shared library
       if: matrix.arch != 'osx-x64'
-      run: dotnet publish /p:NativeLib=Shared /p:OutputType=Library -c Release -o ../output
+      run: dotnet publish /p:NativeLib=Shared /p:OutputType=Library -r ${{ matrix.arch }} -c Release -o ../output
       working-directory: GetAssemblyInfo
 
     - uses: actions/upload-artifact@v3
