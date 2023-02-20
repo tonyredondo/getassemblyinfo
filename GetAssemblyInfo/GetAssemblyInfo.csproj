@@ -21,6 +21,7 @@
         <Otherwise>
             <PropertyGroup>
                 <PublishAot>true</PublishAot>
+                <ExportsFile>$(MSBuildThisFileDirectory)exports.def</ExportsFile>
             </PropertyGroup>
             <ItemGroup Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'X64'">
                 <PackageReference Include="PublishAotCompressed" Version="1.0.0" />
