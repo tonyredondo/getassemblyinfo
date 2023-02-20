@@ -23,7 +23,7 @@
                 <PublishAot>true</PublishAot>
                 <ExportsFile>$(MSBuildThisFileDirectory)exports.def</ExportsFile>
             </PropertyGroup>
-            <ItemGroup Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'X64'">
+            <ItemGroup Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'X64' AND '$(OutputType)' == 'Exe'">
                 <PackageReference Include="PublishAotCompressed" Version="1.0.0" />
             </ItemGroup>
         </Otherwise>
