@@ -113,7 +113,7 @@ static string GetFullAssemblyInfoFromFilePath(string filePath)
     return sb.ToString();
 }
 
-[UnmanagedCallersOnly]
+[UnmanagedCallersOnly(EntryPoint = "get_info")]
 static IntPtr GetInfo(IntPtr pFilepath)
 {
     if (Marshal.PtrToStringAnsi(pFilepath) is { } filepath)
