@@ -37,6 +37,9 @@ jobs:
       run: dotnet build -c Release
     - name: Publish
       run: dotnet publish -c Release -o ./output
+    - name: Publish shared library
+      if: matrix.arch != 'osx-x64'
+      run: dotnet publish /p:NativeLib=Shared -c Release -o ./output
 
     - uses: actions/upload-artifact@v3
       with:
@@ -45,4 +48,10 @@ jobs:
           ${{ github.workspace }}/output/GetAssemblyInfo
           ${{ github.workspace }}/output/GetAssemblyInfo.exe
 
-        
+    - uses: actions/upload-artifact@v3
+      if: matrix.arch != 'osx-x64'
+      with:
+        name: GetAssemblyInfo-${{ matrix.arch }}-shared
+        path: |
+          ${{ github.workspace }}/output/GetAssemblyInfo.dll
+          ${{ github.workspace }}/output/GetAssemblyInfo.so
