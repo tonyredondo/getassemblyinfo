@@ -20,13 +20,15 @@ jobs:
         include:
           - os: ubuntu-22.04
             arch: linux-x64
+          - os: ubuntu-22.04
+            arch: arm64
           - os: windows-2022
             arch: win-x64
           - os: macos-11
             arch: osx-x64
     steps:
     - name: Install dependencies 
-      if: matrix.arch == 'linux-x64'
+      if: matrix.arch == 'linux-x64' || matrix.arch == 'arm64'
       run: |
         sudo apt-get update
         sudo apt install clang
