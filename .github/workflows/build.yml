@@ -16,9 +16,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, windows-2022, macos-11]
+        os: [ubuntu-22.04.3, windows-2022, macos-11]
         include:
-          - os: ubuntu-22.04
+          - os: ubuntu-22.04.3
             arch: linux-x64
           - os: windows-2022
             arch: win-x64
@@ -28,6 +28,7 @@ jobs:
     - name: Install dependencies 
       if: matrix.arch == 'linux-x64'
       run: |
+        apt-get update
         sudo apt install clang
         sudo apt-get install libtool
         sudo apt-get install libssl-dev
