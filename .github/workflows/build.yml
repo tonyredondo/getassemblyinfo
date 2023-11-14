@@ -28,7 +28,7 @@ jobs:
     - name: Install dependencies 
       if: matrix.arch == 'linux-x64'
       run: |
-        apt-get update
+        sudo apt-get update
         sudo apt install clang
         sudo apt-get install libtool
         sudo apt-get install libssl-dev
