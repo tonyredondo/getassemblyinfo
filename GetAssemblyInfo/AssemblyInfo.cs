@@ -22,7 +22,6 @@ public static class AssemblyInfo
         {
             sb.AppendFormat("{0}{1}", ex, Environment.NewLine);
         }
-
         return sb.ToString();
     }
 
