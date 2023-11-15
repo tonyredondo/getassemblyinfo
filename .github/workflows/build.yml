@@ -28,7 +28,9 @@ jobs:
     - name: Install dependencies 
       if: matrix.arch == 'linux-arm64'
       run: |
-        sudo /usr/bin/dotnet/eng/common/cross/build-rootfs.sh arm64 bionic
+        wget https://raw.githubusercontent.com/dotnet/runtime/main/eng/common/cross/build-rootfs.sh
+        chmod +x build-rootfs.sh
+        sudo ./build-rootfs.sh arm64 bionic
         sudo apt-get update
         sudo apt install clang
         sudo apt-get install libtool
