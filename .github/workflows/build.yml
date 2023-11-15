@@ -53,12 +53,12 @@ jobs:
       run: dotnet publish -r ${{ matrix.arch }} -c Release -o ../output
       working-directory: GetAssemblyInfo
 
-    - name: Test
-      run: ls ${{ github.workspace }}/output
+    - name: TestFile
+      run: file ${{ github.workspace }}/output/GetAssemblyInfo
       working-directory: GetAssemblyInfo
 
     - name: Test
-      run: ${{ github.workspace }}/output/GetAssemblyInfo/GetAssemblyInfo-${{ matrix.arch }}
+      run: ${{ github.workspace }}/output/GetAssemblyInfo test.dll
       working-directory: GetAssemblyInfo
 
     - uses: actions/upload-artifact@v3
