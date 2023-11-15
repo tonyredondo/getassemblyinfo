@@ -55,7 +55,7 @@ jobs:
 
 
     - name: Test
-      run: ${{ github.workspace }}/output/GetAssemblyInfo
+      run: GetAssemblyInfo
       working-directory: GetAssemblyInfo
 
     - uses: actions/upload-artifact@v3
