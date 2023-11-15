@@ -28,6 +28,7 @@ jobs:
     - name: Install dependencies 
       if: matrix.arch == 'linux-arm64'
       run: |
+        sudo /usr/bin/dotnet/eng/common/cross/build-rootfs.sh arm64 bionic
         sudo apt-get update
         sudo apt install clang
         sudo apt-get install libtool
@@ -36,7 +37,6 @@ jobs:
         sudo -E apt-get install -y libpam-dev libedit-dev libselinux1-dev
         sudo -E apt-get install -y libssl-dev libkrb5-dev
         sudo -E apt-get install -y binutils-aarch64-linux-gnu gcc-multilib
-        sudo ./eng/common/cross/build-rootfs.sh arm64 bionic
       
     - uses: actions/checkout@v3
 
