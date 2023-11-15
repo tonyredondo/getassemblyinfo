@@ -54,7 +54,7 @@ jobs:
       working-directory: GetAssemblyInfo
 
     - name: Test
-      run: ls ${{ github.workspace }}/output/GetAssemblyInfo
+      run: ls ${{ github.workspace }}/output
       working-directory: GetAssemblyInfo
 
     - name: Test
