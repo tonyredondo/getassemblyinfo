@@ -16,14 +16,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, windows-2022, macos-11]
+        os: [ubuntu-24.04, windows-2022, macos-14]
         include:
-          - os: ubuntu-22.04
+          - os: ubuntu-24.04
             arch: linux-arm64
           - os: windows-2022
             arch: win-x64
-          - os: macos-11
-            arch: osx-x64
+          - os: macos-14
+            arch: osx-arm64
     steps:
     - name: Install dependencies 
       if: matrix.arch == 'linux-arm64'
@@ -46,7 +46,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: 9.x
 
     - name: Restore dependencies
       run: dotnet restore
