@@ -59,7 +59,7 @@ jobs:
       working-directory: GetAssemblyInfo
 
     - name: Upload error log
-      if: matrix.arch == 'linux-arm64'
+      if: always()
       uses: actions/upload-artifact@v4
       with:
         name: error-log
