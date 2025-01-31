@@ -16,14 +16,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, windows-2022, macos-11]
+        os: [ubuntu-22.04, windows-2022, macos-14]
         include:
           - os: ubuntu-22.04
             arch: linux-arm64
           - os: windows-2022
             arch: win-x64
-          - os: macos-11
-            arch: osx-x64
+          - os: macos-14
+            arch: osx-arm64
     steps:
     - name: Install dependencies 
       if: matrix.arch == 'linux-arm64'
@@ -34,9 +34,9 @@ jobs:
         sudo apt-get install libssl-dev
         sudo apt-get install -y make gcc libc-dev libpq-dev zlib1g-dev
         sudo -E apt-get install -y libpam-dev libedit-dev libselinux1-dev
-        sudo -E apt-get install -y libssl-dev libkrb5-dev
-        sudo -E apt-get install -y binutils-aarch64-linux-gnu gcc-multilib debootstrap
-        wget https://raw.githubusercontent.com/dotnet/runtime/main/eng/common/cross/build-rootfs.sh
+        sudo -E apt-get install -y libssl-dev libkrb5-dev 
+        sudo -E apt-get install -y binutils-aarch64-linux-gnu debootstrap binfmt-support qemu-user-static gcc-aarch64-linux-gnu
+        wget https://raw.githubusercontent.com/dotnet/runtime/refs/tags/v9.0.1/eng/common/cross/build-rootfs.sh
         chmod +x build-rootfs.sh
         sudo ./build-rootfs.sh arm64 bionic
     
@@ -46,7 +46,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: 9.x
 
     - name: Restore dependencies
       run: dotnet restore
@@ -58,7 +58,15 @@ jobs:
       run: dotnet publish -r ${{ matrix.arch }} -c Release -o ../output
       working-directory: GetAssemblyInfo
 
-    - uses: actions/upload-artifact@v3
+    - name: Upload error log
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: error-log
+        path: |
+          /home/runner/.tools/rootfs/arm64/debootstrap/debootstrap.log
+
+    - uses: actions/upload-artifact@v4
       with:
         name: GetAssemblyInfo-${{ matrix.arch }}
         path: |
@@ -66,12 +74,12 @@ jobs:
           ${{ github.workspace }}/output/GetAssemblyInfo.exe
 
     - name: Publish shared library
-      if: matrix.arch != 'osx-x64'
+      if: matrix.arch != 'osx-arm64'
       run: dotnet publish /p:NativeLib=Shared /p:OutputType=Library -r ${{ matrix.arch }} -c Release -o ../output
       working-directory: GetAssemblyInfo
 
-    - uses: actions/upload-artifact@v3
-      if: matrix.arch != 'osx-x64'
+    - uses: actions/upload-artifact@v4
+      if: matrix.arch != 'osx-arm64'
       with:
         name: GetAssemblyInfo-${{ matrix.arch }}-shared
         path: |

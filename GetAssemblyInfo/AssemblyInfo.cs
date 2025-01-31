@@ -15,7 +15,7 @@ public static class AssemblyInfo
         sb.AppendFormat("{0}: {1}{2}", nameof(assemblyName.Version), assemblyName.Version, Environment.NewLine);
         try
         {
-            var asm = AssemblyDefinition.ReadAssembly(filePath);
+            using var asm = AssemblyDefinition.ReadAssembly(filePath);
             sb.AppendFormat("ModuleVersionId: {0}{1}", asm.MainModule.Mvid, Environment.NewLine);
         }
         catch (Exception ex)
@@ -38,7 +38,7 @@ public static class AssemblyInfo
         var processedAttributes = new List<string>();
         try
         {
-            var asm = AssemblyDefinition.ReadAssembly(filePath);
+            using var asm = AssemblyDefinition.ReadAssembly(filePath);
             sb.AppendFormat("ModuleVersionId: {0}{1}", asm.MainModule.Mvid, Environment.NewLine);
             foreach (var attr in asm.MainModule.GetCustomAttributes())
             {
