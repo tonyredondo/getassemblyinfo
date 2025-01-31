@@ -37,6 +37,10 @@ jobs:
         sudo -E apt-get install -y libssl-dev libkrb5-dev
         sudo -E apt-get install -y binutils-aarch64-linux-gnu gcc-multilib debootstrap binfmt-support qemu-user-static
         wget https://raw.githubusercontent.com/dotnet/runtime/refs/tags/v8.0.12/eng/common/cross/build-rootfs.sh
+        mkdir arm64
+        cd arm64
+        wget https://raw.githubusercontent.com/dotnet/runtime/refs/tags/v8.0.12/eng/common/cross/arm64/sources.list.bionic
+        cd ..
         chmod +x build-rootfs.sh
         sudo ./build-rootfs.sh arm64 bionic
     
