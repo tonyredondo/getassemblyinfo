@@ -23,6 +23,9 @@
                 <PublishAot>true</PublishAot>
                 <ExportsFile>$(MSBuildThisFileDirectory)exports.def</ExportsFile>
             </PropertyGroup>
+            <PropertyGroup Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'ARM64'">
+                <ObjCopyName>aarch64-linux-gnu-objcopy</ObjCopyName>
+            </PropertyGroup>
             <ItemGroup Condition="('$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'X64' OR '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'ARM64') AND '$(OutputType)' == 'Exe'">
                 <PackageReference Include="PublishAotCompressed" Version="1.0.3" />
             </ItemGroup>
