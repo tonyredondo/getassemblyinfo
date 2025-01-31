@@ -58,10 +58,11 @@ jobs:
       run: dotnet publish -r ${{ matrix.arch }} -c Release -o ../output
       working-directory: GetAssemblyInfo
 
-    - uses: actions/upload-artifact@v4
+    - name: Upload error log
       if: matrix.arch == 'linux-arm64'
+      uses: actions/upload-artifact@v4
       with:
-        name: error-log-${{ matrix.os }}-${{ matrix.arch }}
+        name: error-log
         path: |
           /home/runner/.tools/rootfs/arm64/debootstrap/debootstrap.log
 
