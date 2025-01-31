@@ -36,7 +36,7 @@ jobs:
         sudo -E apt-get install -y libpam-dev libedit-dev libselinux1-dev
         sudo -E apt-get install -y libssl-dev libkrb5-dev
         sudo -E apt-get install -y binutils-aarch64-linux-gnu gcc-multilib debootstrap
-        wget https://raw.githubusercontent.com/dotnet/runtime/main/eng/common/cross/build-rootfs.sh
+        wget https://raw.githubusercontent.com/dotnet/runtime/refs/tags/v9.0.1/eng/common/cross/build-rootfs.sh
         chmod +x build-rootfs.sh
         sudo ./build-rootfs.sh arm64 bionic
     
