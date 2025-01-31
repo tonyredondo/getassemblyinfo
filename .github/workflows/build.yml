@@ -16,9 +16,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04, windows-2022, macos-14]
+        os: [ubuntu-22.04, windows-2022, macos-14]
         include:
-          - os: ubuntu-24.04
+          - os: ubuntu-22.04
             arch: linux-arm64
           - os: windows-2022
             arch: win-x64
@@ -66,12 +66,12 @@ jobs:
           ${{ github.workspace }}/output/GetAssemblyInfo.exe
 
     - name: Publish shared library
-      if: matrix.arch != 'osx-x64'
+      if: matrix.arch != 'osx-arm64'
       run: dotnet publish /p:NativeLib=Shared /p:OutputType=Library -r ${{ matrix.arch }} -c Release -o ../output
       working-directory: GetAssemblyInfo
 
     - uses: actions/upload-artifact@v4
-      if: matrix.arch != 'osx-x64'
+      if: matrix.arch != 'osx-arm64'
       with:
         name: GetAssemblyInfo-${{ matrix.arch }}-shared
         path: |
