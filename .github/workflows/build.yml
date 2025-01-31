@@ -70,7 +70,7 @@ jobs:
       run: dotnet publish /p:NativeLib=Shared /p:OutputType=Library -r ${{ matrix.arch }} -c Release -o ../output
       working-directory: GetAssemblyInfo
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       if: matrix.arch != 'osx-x64'
       with:
         name: GetAssemblyInfo-${{ matrix.arch }}-shared
